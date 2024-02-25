@@ -1,0 +1,159 @@
+/**
+ * StarBlast, jogo de naves espaciais.
+ *
+ * Este projecto é um projecto da cadeira de computação gráfica
+ * como requisito parcial de avaliação do 4º ano de engenharia
+ * informática (ISPTEC - Luanda, Angola).
+ *
+ * @link   https://github.com/hlucheses/starblast/
+ * @file   Estilo da página.
+ * @author Andreia Vanessa Graça de Brito
+ * @author Helder Lucheses Gonçalves da Costa
+ * @author Miguel Gamboa Francisco Domingos
+ * @since  27.12.2021
+ * 
+ * @contact {20180296@isptec.co.ao, helder@lucheses.com, miguel@indiouz.com}   
+ */
+
+@font-face {
+    font-family: 'SpaceMission';
+    src: url('../fonts/SpaceMission-rgyw9.otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    margin: 0;
+    overflow: hidden;
+    z-index: 0;
+}
+
+#info {
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    text-align: center;
+    z-index: 100;
+    display: block;
+    color: white;
+}
+
+#topItems {
+    position: absolute;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    width: 100%;
+    height: 15%;
+    padding: 2em;
+    right: 1em;
+    font-family: 'SpaceMission';
+    font-size: large;
+    letter-spacing: .2em;
+    text-align: right;
+    justify-content: space-between;
+}
+
+#topItems span span {
+    color: #850000
+}
+
+#hearts {
+    color: #f00;
+}
+
+#start {
+    background-image: url('../img/bckg.jpg');
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 100;
+    background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  /* Center and scale the image nicely */
+  
+}
+
+#start button {
+    background: rgb(255, 157, 0);
+}
+  
+  #buttons {
+      margin-top: 30%;
+    height: 20%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+
+  }
+  
+  #buttons button {
+    min-width: 300px;
+    min-height: 60px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 22px;
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    font-weight: 700;
+    color: #313133;
+    background: rgb(255, 157, 0);
+  background: linear-gradient(90deg, rgba(255,155,0,1) 0%, rgba(240,180,0,1) 100%);
+    border: none;
+    border-radius: 1000px;
+    box-shadow: 12px 12px 24px rgba(240,180,0,.64);
+    transition: all 0.3s ease-in-out 0s;
+    cursor: pointer;
+    outline: none;
+    position: relative;
+    padding: 10px;
+    }
+  
+  button::before {
+  content: '';
+    border-radius: 1000px;
+    min-width: calc(300px + 12px);
+    min-height: calc(60px + 12px);
+    box-shadow: 0 0 60px rgba(255,155,0,1);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: all .3s ease-in-out 0s;
+  }
+  
+  button:hover::before, button:focus::before {
+    opacity: 1;
+  }
+  
+  button::after {
+    content: '';
+    width: 30px; height: 30px;
+    border-radius: 100%;
+    border: 6px solid rgba(255,155,0,1);
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: none;
+  }
+  
+  button:hover::after, button:focus::after {
+    animation: ring 1.5s infinite;
+  }
+  
+  @keyframes ring {
+    0% {
+      width: 30px;
+      height: 30px;
+      opacity: 1;
+    }
+    100% {
+      width: 300px;
+      height: 300px;
+      opacity: 0;
+    }
+  }

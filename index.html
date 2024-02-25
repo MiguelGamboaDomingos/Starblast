@@ -1,0 +1,245 @@
+<!--
+    - StarBlast, jogo de naves espaciais.
+    - Este projecto é um projecto da cadeira de computação gráfica
+    - como requisito parcial de avaliação do 4º ano de engenharia
+    - informática (ISPTEC - Luanda, Angola).
+    -
+    - @link https://github.com/hlucheses/starblast/
+    - @file Documento html.
+    -
+    - @author Andreia Vanessa Graça de Brito
+    - @author Helder Lucheses Gonçalves da Costa
+    - @author Miguel Gamboa Francisco Domingos
+    -
+    - @since 27.12.2021
+    - @contact {20180296@isptec.co.ao, helder@lucheses.com, miguel@indiouz.com}
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Star Blast</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="stylesheet" href="css/estilo.css">
+    <link href="vendor/fontawesome/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="start">
+        <div id="buttons">
+            <button id="playButton">
+                PLAY
+            </button>
+            <button id="teacherMode" class="newGame">
+                TEACHER MODE
+            </button>
+            <button id="scoreboard" style="display: none;">
+                RESTART
+            </button>
+            <button id="help">
+                HELP
+            </button>
+            <button id="exit" style="display: none;">
+                EXIT
+            </button>
+        </div>
+    </div>
+    <div id="topItems" style="display: none;">
+        <span id="level"></span>
+        <span>POINTS: <span id="noPoints"></span></span>
+        <span>REMAINING ENEMIES: <span id="noEnemies"></span></span>
+        <span>REMAINING TIME: <span id="timeAvailable"></span></span>
+        <span><span id="hearts"></span></span>
+    </div>
+    <div id="gameOver" style="display:none;position:absolute;z-index: 80; background: url('img/Game-over.png');width: 100%; height: 90%;background-size: contain;background-position: center;background-repeat: no-repeat;"></div>
+    <div id="loading" style="display:none;position:absolute;z-index: 800; background: url('img/loading.gif');width: 100%; height: 90%;background-size: contain;background-position: center;background-repeat: no-repeat;"></div>
+</body>
+
+<!-- 
+    As inclusões apresentam-se neste estado porque é suposto ser uma página
+    estática. Um requisito para o uso do import é que haja um servidor.
+-->
+
+<script src="vendor/three.js"></script>
+
+<script src="js/Constants.js"></script>
+
+<!-- Classe molde de todos os objectos do jogo -->
+<script src="js/StarBlastObject.js"></script>
+
+<!-- Classe representativa dos holofotes -->
+<script src="js/lights/SpotlightDesign.js"></script>
+<script src="js/lights/Spotlight.js"></script>
+<script src="js/lights/BillboardLightDesign.js"></script>
+<script src="js/lights/BillboardLight.js"></script>
+
+<!-- Classe representativa das paredes -->
+<script src="js/walls/WallDesign.js"></script>
+<script src="js/walls/Wall.js"></script>
+<script src="js/walls/FloorDesign.js"></script>
+<script src="js/walls/Floor.js"></script>
+
+<!-- Classes estáticas -->
+<script src="js/Cameras.js"></script>
+<script src="js/Collision.js"></script>
+<script src="js/Scenary.js"></script>
+
+<!-- Classes relativas à munição do canhão -->
+<script src="js/bullets/design/CannonBall.js"></script>
+<script src="js/bullets/design/Missile.js"></script>
+<script src="js/bullets/Bullet.js"></script>
+
+<script src="js/spaceships/parts/SpaceshipPart.js"></script>
+
+<!-- Designs -->
+<script src="js/spaceships/design/NeilA.js"></script>
+<script src="js/spaceships/design/NeilAII.js"></script>
+<script src="js/spaceships/design/Buzz.js"></script>
+<script src="js/spaceships/design/AlanB.js"></script>
+<script src="js/spaceships/design/MichaelC.js"></script>
+
+<!-- Classes relativas às naves (instanciáveis) -->
+<script src="js/spaceships/parts/Cannon.js"></script>
+<script src="js/spaceships/Spaceship.js"></script>
+<script src="js/spaceships/PlayerSpaceship.js"></script>
+<script src="js/spaceships/EnemySpaceship.js"></script>
+
+<script src="js/Level.js"></script>
+
+<!-- Main -->
+<script src="js/StarBlast.js"></script>
+
+<script>
+    // Manipulação do DOM
+    let isPlay = false;
+    let started = false;
+    let startedStyle = "background: none;position: absolute;height: 100%;width: 100%;z-index: 100;background-position: center;background-repeat: no-repeat;ackground-size: cover;";
+    let topItemsStyle = "position: absolute;z-index: 100;display: flex;flex-direction: column;color: #fff;width: 100%;height: 15%;padding: 2em;right: 1em;font-family: 'SpaceMission';font-size: large;letter-spacing: .2em;text-align: right;justify-content: space-between;";
+    let newGameStyle = "background-image: url('img/bckg.jpg');position: absolute;height: 100%;width: 100%;z-index: 100;background-position: center;background-repeat: no-repeat;ackground-size: cover;";
+   
+
+    const scoreboardDiv = document.getElementById('scoreboard');
+    const startDiv = document.getElementById('start');
+    const topItems = document.getElementById('topItems');
+    const exitBtn = document.getElementById('exit');
+    const gameOverDiv = document.getElementById('gameOver');
+
+    document.getElementById('help').onclick = function () {
+        alert("Ver Instructions.png (será posto ingame em versões futuras)");
+    }
+
+    document.getElementById('scoreboard').onclick = function () {
+        if (started == true && isPlay == false) {
+            exit();
+            playGame();
+        }
+    }
+
+    document.getElementById('playButton').onclick = function() {
+        playGame();
+    };
+    
+    function playGame() {
+
+        startDiv.setAttribute('style', 'display: none');
+        topItems.setAttribute('style', topItemsStyle);
+        scoreboardDiv.setAttribute('style', 'display: block');
+
+        if (!started) {
+            const elements = document.getElementsByClassName('newGame');
+
+            for (let i = 0; i < elements.length; i++) {
+                elements[i].setAttribute('style', 'display: none');
+            }
+            exitBtn.setAttribute('style', 'display: block');
+            isPlay = true;
+            started = true;
+            Constants.GAME_MODE = Constants.RELEASE;
+            StarBlast.init();
+            animate();
+        } else {
+            StarBlast.play();
+        }
+    };
+
+    document.getElementById('teacherMode').onclick = function () {
+        startDiv.setAttribute('style', 'display: none;');
+        topItems.setAttribute('style', topItemsStyle);
+        exitBtn.setAttribute('style', 'display: block');
+        scoreboardDiv.setAttribute('style', 'display: block');
+
+        if (!started) {
+            const elements = document.getElementsByClassName('newGame');
+
+            for (let i = 0; i < elements.length; i++) {
+                elements[i].setAttribute('style', 'display: none');
+            }
+            exitBtn.setAttribute('style', 'display: block');
+            isPlay = true;
+            started = true;
+            Constants.GAME_MODE = Constants.TESTING;
+            StarBlast.init();
+            animate();
+        } else {
+            StarBlast.play();
+        }
+    };
+
+    exitBtn.addEventListener('click', (event) => {
+        exit();
+    });
+
+    let escapeWasDown = false;
+    document.addEventListener('keydown', (event) => {
+        if (started == true) {
+            if (event.code == "Escape" || event.code == "KeyS") {
+                escapeWasDown = true;
+            }
+        }
+    });
+
+    document.addEventListener('keyup', (event) => {
+        if (started == true) {
+            if ((event.code == "Escape" || event.code == "KeyS") && escapeWasDown) {
+                if (!isPlay) {
+                    startDiv.setAttribute('style', 'display: none');
+                    topItems.setAttribute('style', topItemsStyle);
+                    escapeWasDown = false;
+                    StarBlast.play();
+                } else {
+                    StarBlast.pause();
+                }
+            }
+        }
+    });
+
+    document.addEventListener('keypress', (event) => {
+        if (event.code == "KeyR" && started == true && isPlay == false) {
+            exit();
+            playGame();
+        }
+    });
+
+    function exit() {
+        StarBlast.finish();
+        const elements = document.getElementsByClassName('newGame');
+        for (let i = 0; i < elements.length; i++) {
+            elements[i].setAttribute('style', 'display: block');
+        }
+        exitBtn.setAttribute('style', 'display: none');
+        startDiv.setAttribute('style', newGameStyle);
+        scoreboardDiv.setAttribute('style', 'display: none');
+        isPlay = false;
+        started = false;
+    }
+</script>
+
+<!-- É aqui que o Dasher, o Rudolph e o Prancer nascem -->
+<script>
+    //StarBlast.init();
+    //animate();
+</script>
+
+</html>
